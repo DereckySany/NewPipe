@@ -5,10 +5,9 @@ import static org.schabi.newpipe.MainActivity.DEBUG;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -23,10 +22,14 @@ import androidx.core.content.FileProvider;
 
 import org.schabi.newpipe.BuildConfig;
 import org.schabi.newpipe.R;
-import org.schabi.newpipe.util.PicassoHelper;
+import org.schabi.newpipe.RouterActivity;
+import org.schabi.newpipe.extractor.Image;
+import org.schabi.newpipe.util.image.ImageStrategy;
+import org.schabi.newpipe.util.image.PicassoHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.List;
 
 public final class ShareUtils {
     private static final String TAG = ShareUtils.class.getSimpleName();
@@ -59,8 +62,9 @@ public final class ShareUtils {
     }
 
     /**
-     * Open the url with the system default browser. If no browser is set as default, falls back to
-     * {@link #openAppChooser(Context, Intent, boolean)}.
+     * Open the url with the system default browser. If no browser is installed, falls back to
+     * {@link #openAppChooser(Context, Intent, boolean)} (for displaying that no apps are available
+     * to handle the action, or possible OEM-related edge cases).
      * <p>
      * This function selects the package to open based on which apps respond to the {@code http://}
      * schema alone, which should exclude special non-browser apps that are can handle the url (e.g.
@@ -74,44 +78,26 @@ public final class ShareUtils {
      * @param url     the url to browse
      **/
     public static void openUrlInBrowser(@NonNull final Context context, final String url) {
-        // Resolve using a generic http://, so we are sure to get a browser and not e.g. the yt app.
+        // Target a generic http://, so we are sure to get a browser and not e.g. the yt app.
         // Note that this requires the `http` schema to be added to `<queries>` in the manifest.
-        final ResolveInfo defaultBrowserInfo;
         final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://"));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            defaultBrowserInfo = context.getPackageManager().resolveActivity(browserIntent,
-                    PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_DEFAULT_ONLY));
-        } else {
-            defaultBrowserInfo = context.getPackageManager().resolveActivity(browserIntent,
-                    PackageManager.MATCH_DEFAULT_ONLY);
-        }
 
         final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        if (defaultBrowserInfo == null) {
-            // No app installed to open a web URL, but it may be handled by other apps so try
-            // opening a system chooser for the link in this case (it could be bypassed by the
-            // system if there is only one app which can open the link or a default app associated
-            // with the link domain on Android 12 and higher)
+        // See https://stackoverflow.com/a/58801285 and `setSelector` documentation
+        intent.setSelector(browserIntent);
+        try {
+            context.startActivity(intent);
+        } catch (final ActivityNotFoundException e) {
+            // No browser is available. This should, in the end, yield a nice AOSP error message
+            // indicating that no app is available to handle this action.
+            //
+            // Note: there are some situations where modified OEM ROMs have apps that appear
+            // to be browsers but are actually app choosers. If starting the Activity fails
+            // related to this, opening the system app chooser is still the correct behavior.
+            intent.setSelector(null);
             openAppChooser(context, intent, true);
-            return;
-        }
-
-        final String defaultBrowserPackage = defaultBrowserInfo.activityInfo.packageName;
-
-        if (defaultBrowserPackage.equals("android")) {
-            // No browser set as default (doesn't work on some devices)
-            openAppChooser(context, intent, true);
-        } else {
-            try {
-                intent.setPackage(defaultBrowserPackage);
-                context.startActivity(intent);
-            } catch (final ActivityNotFoundException e) {
-                // Not a browser but an app chooser because of OEMs changes
-                intent.setPackage(null);
-                openAppChooser(context, intent, true);
-            }
         }
     }
 
@@ -187,6 +173,18 @@ public final class ShareUtils {
             chooserIntent.putExtra(Intent.EXTRA_TITLE, context.getString(R.string.open_with));
         }
 
+        // Avoid opening in NewPipe
+        // (Implementation note: if the URL is one for which NewPipe itself
+        // is set as handler on Android >= 12, we actually remove the only eligible app
+        // for this link, and browsers will not be offered to the user. For that, use
+        // `openUrlInBrowser`.)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            chooserIntent.putExtra(
+                    Intent.EXTRA_EXCLUDE_COMPONENTS,
+                    new ComponentName[]{new ComponentName(context, RouterActivity.class)}
+            );
+        }
+
         // Migrate any clip data and flags from the original intent.
         final int permFlags = intent.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION
                 | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
@@ -249,7 +247,7 @@ public final class ShareUtils {
         // If loading of images has been disabled, don't try to generate a content preview
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
                 && !TextUtils.isEmpty(imagePreviewUrl)
-                && PicassoHelper.getShouldLoadImages()) {
+                && ImageStrategy.shouldLoadImages()) {
 
             final ClipData clipData = generateClipDataForImagePreview(context, imagePreviewUrl);
             if (clipData != null) {
@@ -259,6 +257,29 @@ public final class ShareUtils {
         }
 
         openAppChooser(context, shareIntent, false);
+    }
+
+    /**
+     * Open the android share sheet to share a content.
+     *
+     * <p>
+     * For Android 10+ users, a content preview is shown, which includes the title of the shared
+     * content and an image preview the content, if the preferred image chosen by {@link
+     * ImageStrategy#choosePreferredImage(List)} is in the image cache.
+     * </p>
+     *
+     * @param context the context to use
+     * @param title   the title of the content
+     * @param content the content to share
+     * @param images  a set of possible {@link Image}s of the subject, among which to choose with
+     *                {@link ImageStrategy#choosePreferredImage(List)} since that's likely to
+     *                provide an image that is in Picasso's cache
+     */
+    public static void shareText(@NonNull final Context context,
+                                 @NonNull final String title,
+                                 final String content,
+                                 final List<Image> images) {
+        shareText(context, title, content, ImageStrategy.choosePreferredImage(images));
     }
 
     /**

@@ -2,26 +2,33 @@
 <h2 align="center"><b>NewPipe</b></h2>
 <h4 align="center">Свободный и легковесный клиент потоковых сервисов для Android.</h4>
 
-<p align="center"><a href="https://f-droid.org/packages/org.schabi.newpipe/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on-en.svg" alt="Скачать на F-Droid" height=80/></a></p>
+<p align="center"><a href="https://f-droid.org/packages/org.schabi.newpipe/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on-en.svg" alt="Скачать на F-Droid" width=206/></a></p>
 
 <p align="center">
 <a href="https://github.com/TeamNewPipe/NewPipe/releases" alt="GitHub release"><img src="https://img.shields.io/github/release/TeamNewPipe/NewPipe.svg"></a>
+<a href="https://github.com/TeamNewPipe/NewPipe-nightly/releases" alt="GitHub NewPipe nightly releases"><img src="https://img.shields.io/github/release/TeamNewPipe/NewPipe-nightly.svg?labelColor=purple&label=dev%20nightly"></a>
+<a href="https://github.com/TeamNewPipe/NewPipe-refactor-nightly/releases" alt="GitHub NewPipe refactor nightly releases"><img src="https://img.shields.io/github/release/TeamNewPipe/NewPipe-refactor-nightly.svg?labelColor=purple&label=refactor%20nightly"></a>
 <a href="https://www.gnu.org/licenses/gpl-3.0" alt="Лицензия: GPLv3"><img src="https://img.shields.io/badge/License-GPL%20v3-blue.svg"></a>
-<a href="https://github.com/TeamNewPipe/NewPipe/actions" alt="Состояние сборки"><img src="https://github.com/TeamNewPipe/NewPipe/workflows/CI/badge.svg?branch=dev&event=push"></a>
+<a href="https://github.com/TeamNewPipe/NewPipe/actions" alt="Состояние сборки"><img src="https://github.com/TeamNewPipe/NewPipe/actions/workflows/ci.yml/badge.svg?branch=dev&event=push"></a>
 <a href="https://hosted.weblate.org/engage/newpipe/" alt="Состояние перевода"><img src="https://hosted.weblate.org/widgets/newpipe/-/svg-badge.svg"></a>
-<a href="https://web.libera.chat/#newpipe" alt="Канал IRC: #newpipe"><img src="https://img.shields.io/badge/IRC%20chat-%23newpipe-brightgreen.svg"></a>
-<a href="https://www.bountysource.com/teams/newpipe" alt="Награды Bountysource"><img src="https://img.shields.io/bountysource/team/newpipe/activity.svg?colorB=cd201f"></a>
 </p>
+
+<p align="center">
+<a href="https://web.libera.chat/#newpipe" alt="Канал IRC: #newpipe"><img src="https://img.shields.io/badge/IRC%20chat-%23newpipe-brightgreen.svg"></a>
+<a href="https://matrix.to/#/#newpipe:matrix.newpipe-ev.de" alt="Matrix channel: #newpipe"><img src="https://img.shields.io/badge/Matrix%20chat-%23newpipe-blue"></a>
+</p>
+
 <hr>
 <p align="center"><a href="#screenshots">Скриншоты</a> &bull; <a href="#supported-services">Поддерживаемые сервисы</a> &bull; <a href="#description">Описание</a> &bull; <a href="#features">Возможности</a> &bull; <a href="#installation-and-updates">Установка и обновления</a> &bull; <a href="#contribution">Участие</a> &bull; <a href="#donate">Пожертвование</a> &bull; <a href="#license">Лицензия</a></p>
 <p align="center"><a href="https://newpipe.net">Сайт</a> &bull; <a href="https://newpipe.net/blog/">Блог</a> &bull; <a href="https://newpipe.net/FAQ/">ЧЗВ</a> &bull; <a href="https://newpipe.net/press/">Пресса</a></p>
 <hr>
 
-*Read this document in other languages: [Deutsch](README.de.md), [English](../README.md), [Español](README.es.md), [Français](README.fr.md), [हिन्दी](README.hi.md), [Italiano](README.it.md), [한국어](README.ko.md), [Português Brasil](README.pt_BR.md), [Polski](README.pl.md), [ਪੰਜਾਬੀ ](README.pa.md), [日本語](README.ja.md), [Română](README.ro.md), [Soomaali](README.so.md), [Türkçe](README.tr.md), [正體中文](README.zh_TW.md), [অসমীয়া](README.asm.md), [うちなーぐち](README.ryu.md)*
+*Read this document in other languages: [Deutsch](README.de.md), [English](../README.md), [Español](README.es.md), [Français](README.fr.md), [हिन्दी](README.hi.md), [Italiano](README.it.md), [한국어](README.ko.md), [Português Brasil](README.pt_BR.md), [Polski](README.pl.md), [ਪੰਜਾਬੀ ](README.pa.md), [日本語](README.ja.md), [Română](README.ro.md), [Soomaali](README.so.md), [Türkçe](README.tr.md), [正體中文](README.zh_TW.md), [অসমীয়া](README.asm.md), [うちなーぐち](README.ryu.md), [Српски](README.sr.md) , [العربية](README.ar.md)*
 
-<b>ВНИМАНИЕ: ЭТО ПРИЛОЖЕНИЕ НАХОДИТСЯ В СТАДИИ БЕТА, ПОЭТОМУ ВЫ МОЖЕТЕ ОБНАРУЖИТЬ ОШИБКИ. ЕСЛИ ЭТО СЛУЧИТСЯ, ОТКРОЙТЕ ВОПРОС В НАШЕМ РЕПОЗИТОРИИ GITHUB, ЗАПОЛНЯ ЕГО ПО ШАБЛОНУ.</b>
-
-<b>РАЗМЕЩЕНИЕ NEWPIPE ИЛИ ЕГО ОТВЕТВЛЕНИЙ В МАГАЗИНЕ GOOGLE PLAY НАРУШАЕТ ИХ УСЛОВИЯ И ПОЛОЖЕНИЯ.</b>
+> [!warning]
+> <b>ЭТО ПРИЛОЖЕНИЕ НАХОДИТСЯ В СТАДИИ БЕТА, ПОЭТОМУ ВЫ МОЖЕТЕ ОБНАРУЖИТЬ ОШИБКИ. ЕСЛИ ЭТО СЛУЧИТСЯ, ОТКРОЙТЕ ВОПРОС В НАШЕМ РЕПОЗИТОРИИ GITHUB, ЗАПОЛНЯ ЕГО ПО ШАБЛОНУ.</b>
+>
+> <b>РАЗМЕЩЕНИЕ NEWPIPE ИЛИ ЕГО ОТВЕТВЛЕНИЙ В МАГАЗИНЕ GOOGLE PLAY НАРУШАЕТ ИХ УСЛОВИЯ И ПОЛОЖЕНИЯ.</b>
 
 ## Скриншоты
 
@@ -106,7 +113,7 @@ NewPipe работает, извлекая необходимые данные �
 <b>Примечание: когда вы импортируете базу данных в официальное приложение, убедитесь, что это именно та база данных, которую вы экспортировали _из_ официального приложения. Если вы импортируете базу данных, экспортированную из APK, отличного от официального приложения, это может привести к ошибке. Такое действие не поддерживается, и вы должны делать его только тогда, когда абсолютно уверены, что знаете, что делаете.</b>
 
 ## Участие
-Если у вас есть идеи, переводы, изменения дизайна, очистка кода или даже серьезные изменения кода, помощь всегда приветствуется. Приложение становится всё лучше и лучше с каждым вкладом, независимо от того, большой он или маленький! Если вы хотите принять участие, ознакомьтесь с нашими [заметками об участии](.github/CONTRIBUTING.md).
+Если у вас есть идеи, переводы, изменения дизайна, очистка кода или даже серьезные изменения кода, помощь всегда приветствуется. Приложение становится всё лучше и лучше с каждым вкладом, независимо от того, большой он или маленький! Если вы хотите принять участие, ознакомьтесь с нашими [заметками об участии](/.github/CONTRIBUTING.md).
 
 <a href="https://hosted.weblate.org/engage/newpipe/">
 <img src="https://hosted.weblate.org/widgets/newpipe/-/287x66-grey.png" alt="Состояние перевода">
@@ -120,16 +127,6 @@ NewPipe работает, извлекая необходимые данные �
     <td><a href="https://liberapay.com/TeamNewPipe/"><img src="https://upload.wikimedia.org/wikipedia/commons/2/27/Liberapay_logo_v2_white-on-yellow.svg" alt="Liberapay" width="80px" ></a></td>
     <td><a href="https://liberapay.com/TeamNewPipe/"><img src="assets/liberapay_qr_code.png" alt="Посетите NewPipe на liberapay.com" width="100px"></a></td>
     <td><a href="https://liberapay.com/TeamNewPipe/donate"><img src="assets/liberapay_donate_button.svg" alt="Пожертвование через Liberapay" height="35px"></a></td>
-  </tr>
-  <tr>
-    <td><img src="https://bitcoin.org/img/icons/logotop.svg" alt="Bitcoin"></td>
-    <td><img src="assets/bitcoin_qr_code.png" alt="QR-код Bitcoin" width="100px"></td>
-    <td><samp>16A9J59ahMRqkLSZjhYj33n9j3fMztFxnh</samp></td>
-  </tr>
-  <tr>
-    <td><a href="https://www.bountysource.com/teams/newpipe"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Bountysource.png/320px-Bountysource.png" alt="Bountysource" width="190px"></a></td>
-    <td><a href="https://www.bountysource.com/teams/newpipe"><img src="assets/bountysource_qr_code.png" alt="Посетите NewPipe на bountysource.com" width="100px"></a></td>
-    <td><a href="https://www.bountysource.com/teams/newpipe/issues"><img src="https://img.shields.io/bountysource/team/newpipe/activity.svg?colorB=cd201f" height="30px" alt="Проверьте, сколько наград вы можете заработать."></a></td>
   </tr>
 </table>
 

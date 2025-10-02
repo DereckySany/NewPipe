@@ -43,7 +43,6 @@
     <string name="download_path_audio_dialog_title">音楽ファイルをダウンロードするフォルダーを選択して下さい</string>
     <string name="general_error">エラー</string>
     <string name="could_not_load_thumbnails">全てのサムネイルを読み込めませんでした</string>
-    <string name="youtube_signature_deobfuscation_error">動画のURLを復号できませんでした</string>
     <string name="parsing_error">ウェブサイトを解析できませんでした</string>
     <string name="content_not_available">コンテンツが利用できません</string>
     <string name="could_not_setup_download_menu">保存メニューを設定できませんでした</string>
@@ -84,9 +83,6 @@
     <string name="recaptcha_request_toast">reCAPTCHA を要求しました</string>
     <string name="black_theme_title">ブラック</string>
     <string name="all">すべて</string>
-    <string name="short_thousand">k</string>
-    <string name="short_million">M</string>
-    <string name="short_billion">B</string>
     <string name="open_in_popup_mode">ポップアップモードで開く</string>
     <string name="msg_popup_permission">ポップアップモードで開くには
 \n権限の許可が必要です</string>
@@ -196,7 +192,6 @@
     <string name="controls_download_desc">動画をダウンロード</string>
     <string name="show_info">情報を表示</string>
     <string name="tab_bookmarks">ブックマークしたプレイリスト</string>
-    <string name="download_thumbnail_title">サムネイルを読み込む</string>
     <string name="thumbnail_cache_wipe_complete_notice">画像キャッシュを消去しました</string>
     <string name="metadata_cache_wipe_title">キャッシュを消去</string>
     <string name="metadata_cache_wipe_summary">アプリ内のキャッシュデータをすべて削除します</string>
@@ -254,7 +249,6 @@
     <string name="read_privacy_policy">プライバシーポリシーを確認</string>
     <string name="use_inexact_seek_title">おおまかなシーク</string>
     <string name="use_inexact_seek_summary">おおまかなシークを使用することで精度が下がる代わりに高速にシークができます。5 秒、15 秒または 25 秒間隔のシークはできません</string>
-    <string name="download_thumbnail_summary">サムネイルの読み込みと保存を無効化します。(このオプションを切り替えるとメモリとディスク上の画像キャッシュが消去されます)</string>
     <string name="auto_queue_summary">キューに関連動画を追加して再生を続ける (繰り返ししない場合)</string>
     <string name="delete_view_history_alert">すべての再生履歴を削除しますか？</string>
     <string name="delete_search_history_alert">すべての検索履歴を削除しますか？</string>
@@ -393,7 +387,7 @@
     <string name="overwrite_failed">ファイルを上書きできません</string>
     <string name="download_already_pending">同じファイル名のダウンロードが既に進行中です</string>
     <string name="error_postprocessing_stopped">ファイルの作業中に NewPipe が閉じられました</string>
-    <string name="error_insufficient_storage">デバイスに空き容量がありません</string>
+    <string name="error_insufficient_storage_left">デバイスに空き容量がありません</string>
     <string name="error_progress_lost">ファイルが削除されたため、進行状況が失われました</string>
     <string name="confirm_prompt">ダウンロード履歴、またはダウンロードしたファイルを消去しますか\?</string>
     <string name="enable_queue_limit">ダウンロード キューの制限</string>
@@ -421,7 +415,6 @@
     <plurals name="listening">
         <item quantity="other">%s 人が聴取中</item>
     </plurals>
-    <string name="localization_changes_requires_app_restart">アプリを再起動すると、言語が変更されます</string>
     <string name="seek_duration_title">高速早送り/巻き戻し間隔</string>
     <string name="peertube_instance_url_title">PeerTube インスタンス</string>
     <string name="peertube_instance_url_summary">PeerTube インスタンスを選択する</string>
@@ -444,7 +437,7 @@
     <string name="app_language_title">アプリの言語</string>
     <string name="systems_language">システムの既定</string>
     <string name="subtitle_activity_recaptcha">解けたら「完了」を押してください</string>
-    <string name="recaptcha_done_button">完了</string>
+    <string name="done">完了</string>
     <string name="videos_string">動画</string>
     <plurals name="seconds">
         <item quantity="other">%d 秒</item>
@@ -534,7 +527,7 @@
     <string name="unsupported_url_dialog_message">URL を認識できませんでした。他のアプリで開きますか？</string>
     <string name="notification_scale_to_square_image_summary">通知に表示されるサムネイルを 16:9 から正方形にします</string>
     <string name="notification_scale_to_square_image_title">サムネイルを正方形にする</string>
-    <string name="notification_actions_summary">以下をタップして通知のアクションを編集します。右側にあるチェックボックスを使用してコンパクトな通知に表示するものを 3 つまで選択します</string>
+    <string name="notification_actions_summary">以下をタップして通知のアクションを編集します。右側にあるチェックボックスを使用してコンパクトな通知に表示するものを３つまで選択します。</string>
     <string name="notification_actions_at_most_three">コンパクトな通知に表示されるアクションは 3 つまで選ぶことができます！</string>
     <string name="notification_action_4_title">5 番目のアクションボタン</string>
     <string name="notification_action_3_title">4 番目のアクションボタン</string>
@@ -588,7 +581,7 @@
     <string name="show_channel_details">チャンネルの詳細を表示</string>
     <string name="radio">ラジオ</string>
     <string name="featured">おすすめ</string>
-    <string name="disable_media_tunneling_summary">ビデオ再生が止まったり出ない場合はメディアトンネリングを無効にしてください</string>
+    <string name="disable_media_tunneling_summary">動画の再生が止まったり動画が出ない場合はメディアトンネリングを無効にしてください。</string>
     <string name="disable_media_tunneling_title">マルチメディアトンネリングを無効にする</string>
     <string name="metadata_privacy_public">公開</string>
     <string name="metadata_privacy_unlisted">限定公開</string>
@@ -602,7 +595,6 @@
     <string name="metadata_language">言語</string>
     <string name="metadata_support">サポート</string>
     <string name="metadata_host">ホスト</string>
-    <string name="metadata_thumbnail_url">サムネイルの URL</string>
     <string name="open_website_license">ウェブサイトを開く</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">ダウンロードのたびに保存する場所を尋ねます</string>
     <string name="no_dir_yet">ダウンロードフォルダーがまだ設定されていません。今すぐデフォルトのフォルダーを選択してください</string>
@@ -620,7 +612,6 @@
     <string name="off">オフ</string>
     <string name="on">オン</string>
     <string name="tablet_mode_title">タブレットモード</string>
-    <string name="service_provides_reason">%s がこの理由を提示:</string>
     <string name="dont_show">表示しない</string>
     <string name="low_quality_smaller">低品質 (小)</string>
     <string name="high_quality_larger">高品質 (大)</string>
@@ -636,14 +627,14 @@
         <item quantity="other">%1$s つのダウンロードを削除しました</item>
     </plurals>
     <plurals name="download_finished_notification">
-        <item quantity="other">%s つのダウンロードが完了しました</item>
+        <item quantity="other">%s 個のダウンロードが完了しました</item>
     </plurals>
     <string name="show_image_indicators_summary">ピカソは、画像の上に、画像の出所を識別する色彩記章を表示します: 赤はネットワーク、青はディスク、緑はメモリ</string>
     <string name="show_image_indicators_title">画像に標識を表示</string>
     <string name="processing_may_take_a_moment">処理中… 少し時間がかかるかもしれません</string>
     <string name="manual_update_description">新しいバージョンを手動で確認します</string>
     <string name="checking_updates_toast">アップデートを確認中…</string>
-    <string name="manual_update_title">アップデートを確認</string>
+    <string name="check_for_updates">アップデートを確認</string>
     <string name="enqueue_next_stream">次をキューに追加</string>
     <string name="enqueued_next">次をキューに追加しました</string>
     <string name="detail_heart_img_view_description">クリエイターの心をこめて</string>
@@ -749,5 +740,71 @@
     <string name="audio_track_present_in_video">オーディオトラックは既にこのせせらぎに存在している必要があります</string>
     <string name="main_tabs_position_title">メインタブの場所</string>
     <string name="main_tabs_position_summary">メインタブセレクタを下に移動</string>
-    <string name="audio_track_name">%1s %2s</string>
+    <string name="audio_track_name">%1$s %2$s</string>
+    <string name="disable_media_tunneling_automatic_info">お使いのデバイスのモデルではメディアトンネリングがサポートされていないため、このデバイスではメディアトンネリングがデフォルトで無効になっています。</string>
+    <string name="no_streams">ストリームはありません</string>
+    <string name="no_live_streams">ライブ配信はありません</string>
+    <string name="metadata_subscribers">登録者</string>
+    <string name="loading_metadata_title">メタ情報を読み込んでいます…</string>
+    <string name="channel_tab_videos">動画</string>
+    <string name="show_channel_tabs_summary">チャンネルページに表示されるタブ</string>
+    <string name="show_channel_tabs">チャンネルタブ</string>
+    <string name="channel_tab_shorts">ショート</string>
+    <string name="feed_fetch_channel_tabs">チャンネルタブを取得する</string>
+    <string name="channel_tab_about">詳細</string>
+    <string name="channel_tab_albums">アルバム</string>
+    <string name="feed_fetch_channel_tabs_summary">フィードを更新するときに取得するタブ。 高速モードを使用してチャンネルを更新する場合は、効果がありません。</string>
+    <string name="channel_tab_playlists">プレイリスト</string>
+    <string name="channel_tab_tracks">トラック</string>
+    <string name="channel_tab_channels">チャンネル</string>
+    <string name="channel_tab_livestreams">ライブ</string>
+    <string name="toggle_screen_orientation">画面の向きを切り替える</string>
+    <string name="toggle_fullscreen">フルスクリーンに切り替える</string>
+    <string name="next_stream">次のストリーム</string>
+    <string name="open_play_queue">再生キューを開く</string>
+    <string name="forward">フォワード</string>
+    <string name="rewind">巻き戻し</string>
+    <string name="replay">リプレイ</string>
+    <string name="play">再生</string>
+    <string name="more_options">その他のオプション</string>
+    <string name="duration">期間</string>
+    <string name="previous_stream">前のストリーム</string>
+    <string name="image_quality_title">品質</string>
+    <string name="question_mark">？</string>
+    <string name="image_quality_low">低品質</string>
+    <string name="metadata_avatars">アバター</string>
+    <string name="metadata_subchannel_avatars">サブチャンネルのアバター</string>
+    <string name="image_quality_none">画像を読み込まない</string>
+    <string name="image_quality_high">高品質</string>
+    <string name="image_quality_medium">中品質</string>
+    <string name="metadata_uploader_avatars">アップローダーのアバター</string>
+    <string name="metadata_banners">バナー</string>
+    <string name="image_quality_summary">画像の品質と画像を読み込むかどうかを選択して、データとメモリの使用量を削減します。 変更により、メモリ内とディスク上の画像キャッシュの両方がクリアされます — %s</string>
+    <string name="metadata_thumbnails">サムネイル</string>
+    <string name="share_playlist_with_list">URLリストで共有</string>
+    <string name="share_playlist_with_titles">タイトル付きで共有</string>
+    <string name="share_playlist_content_details">%1$s
+\n%2$s</string>
+    <string name="share_playlist">プレイリストを共有</string>
+    <string name="video_details_list_item">- %1$s： %2$s</string>
+    <plurals name="replies">
+        <item quantity="other">%sの返信</item>
+    </plurals>
+    <string name="show_more">もっと見る</string>
+    <string name="show_less">表示を少なくする</string>
+    <string name="notification_actions_summary_android13">以下の通知アクションをタップして編集します。 最初の３つのアクション （再生/一時停止、前へ、次へ）はシステムによって設定されており、カスタマイズすることはできません。</string>
+    <string name="error_insufficient_storage">デバイスの空き容量が不足しています</string>
+    <string name="settings_category_backup_restore_title">バックアップと復元</string>
+    <string name="yes">はい</string>
+    <string name="no">いいえ</string>
+    <string name="auto_update_check_description">NewPipe は定期的に新しいバージョンを自動的にチェックし、更新可能になると通知します。
+\n有効にしますか？</string>
+    <string name="reset_settings_title">設定をリセット</string>
+    <string name="reset_settings_summary">全ての設定をデフォルト状態にリセットします</string>
+    <string name="reset_all_settings">全ての設定をリセットすると、優先設定が全て破棄され、アプリが再起動します。
+\n
+\n続行しますか？</string>
+    <string name="import_settings_vulnerable_format">インポートされているエクスポートの設定は、NewPipe 0.27.0以降は非推奨であった脆弱な形式を使用します。 インポートされているエクスポートは信頼できる情報源からであり、将来的にはNewPipe 0.27.0かこれより新しいバージョンから得られるエクスポートのみを優先して使用します。 この脆弱な形式で設定をインポートするための対応はすぐに完全に削除され、新しいバージョンからエクスポートの設定をインポートすることは出来ません。</string>
+    <string name="share_playlist_as_youtube_temporary_playlist">YouTubeの一時的なプレイリストとして共有</string>
+    <string name="audio_track_type_secondary">二次的</string>
 </resources>

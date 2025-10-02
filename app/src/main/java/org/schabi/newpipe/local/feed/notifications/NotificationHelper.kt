@@ -22,7 +22,7 @@ import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
 import org.schabi.newpipe.local.feed.service.FeedUpdateInfo
 import org.schabi.newpipe.util.NavigationHelper
-import org.schabi.newpipe.util.PicassoHelper
+import org.schabi.newpipe.util.image.PicassoHelper
 
 /**
  * Helper for everything related to show notifications about new streams to the user.
@@ -58,7 +58,7 @@ class NotificationHelper(val context: Context) {
             .setAutoCancel(true)
             .setCategory(NotificationCompat.CATEGORY_SOCIAL)
             .setGroupSummary(true)
-            .setGroup(data.listInfo.url)
+            .setGroup(data.url)
             .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
 
         // Build a summary notification for Android versions < 7.0
@@ -73,7 +73,7 @@ class NotificationHelper(val context: Context) {
                 context,
                 data.pseudoId,
                 NavigationHelper
-                    .getChannelIntent(context, data.listInfo.serviceId, data.listInfo.url)
+                    .getChannelIntent(context, data.serviceId, data.url)
                     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
                 0,
                 false
@@ -88,7 +88,7 @@ class NotificationHelper(val context: Context) {
 
                 // Show individual stream notifications, set channel icon only if there is actually
                 // one
-                showStreamNotifications(newStreams, data.listInfo.serviceId, bitmap)
+                showStreamNotifications(newStreams, data.serviceId, data.url, bitmap)
                 // Show summary notification
                 manager.notify(data.pseudoId, summaryBuilder.build())
 
@@ -97,7 +97,7 @@ class NotificationHelper(val context: Context) {
 
             override fun onBitmapFailed(e: Exception, errorDrawable: Drawable) {
                 // Show individual stream notifications
-                showStreamNotifications(newStreams, data.listInfo.serviceId, null)
+                showStreamNotifications(newStreams, data.serviceId, data.url, null)
                 // Show summary notification
                 manager.notify(data.pseudoId, summaryBuilder.build())
                 iconLoadingTargets.remove(this) // allow it to be garbage-collected
@@ -118,10 +118,11 @@ class NotificationHelper(val context: Context) {
     private fun showStreamNotifications(
         newStreams: List<StreamInfoItem>,
         serviceId: Int,
+        channelUrl: String,
         channelIcon: Bitmap?
     ) {
         for (stream in newStreams) {
-            val notification = createStreamNotification(stream, serviceId, channelIcon)
+            val notification = createStreamNotification(stream, serviceId, channelUrl, channelIcon)
             manager.notify(stream.url.hashCode(), notification)
         }
     }
@@ -129,6 +130,7 @@ class NotificationHelper(val context: Context) {
     private fun createStreamNotification(
         item: StreamInfoItem,
         serviceId: Int,
+        channelUrl: String,
         channelIcon: Bitmap?
     ): Notification {
         return NotificationCompat.Builder(
@@ -139,7 +141,7 @@ class NotificationHelper(val context: Context) {
             .setLargeIcon(channelIcon)
             .setContentTitle(item.name)
             .setContentText(item.uploaderName)
-            .setGroup(item.uploaderUrl)
+            .setGroup(channelUrl)
             .setColor(ContextCompat.getColor(context, R.color.ic_launcher_background))
             .setColorized(true)
             .setAutoCancel(true)

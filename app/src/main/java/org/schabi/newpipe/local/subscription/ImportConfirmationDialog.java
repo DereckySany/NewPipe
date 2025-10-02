@@ -10,12 +10,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import com.evernote.android.state.State;
+import com.livefront.bridge.Bridge;
+
 import org.schabi.newpipe.R;
-
-import icepick.Icepick;
-import icepick.State;
-
-import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
 public class ImportConfirmationDialog extends DialogFragment {
     @State
@@ -35,7 +33,6 @@ public class ImportConfirmationDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable final Bundle savedInstanceState) {
-        assureCorrectAppLanguage(getContext());
         return new AlertDialog.Builder(requireContext())
                 .setMessage(R.string.import_network_expensive_warning)
                 .setCancelable(true)
@@ -57,12 +54,12 @@ public class ImportConfirmationDialog extends DialogFragment {
             throw new IllegalStateException("Result intent is null");
         }
 
-        Icepick.restoreInstanceState(this, savedInstanceState);
+        Bridge.restoreInstanceState(this, savedInstanceState);
     }
 
     @Override
     public void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
-        Icepick.saveInstanceState(this, outState);
+        Bridge.saveInstanceState(this, outState);
     }
 }

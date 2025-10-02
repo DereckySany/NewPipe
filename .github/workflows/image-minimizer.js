@@ -32,12 +32,12 @@ module.exports = async ({github, context}) => {
     }
 
     // Regex for finding images (simple variant) ![ALT_TEXT](https://*.githubusercontent.com/<number>/<variousHexStringsAnd->.<fileExtension>)
-    const REGEX_USER_CONTENT_IMAGE_LOOKUP = /\!\[(.*)\]\((https:\/\/[-a-z0-9]+\.githubusercontent\.com\/\d+\/[-0-9a-f]{32,512}\.(jpg|gif|png))\)/gm;
-    const REGEX_ASSETS_IMAGE_LOCKUP = /\!\[(.*)\]\((https:\/\/github\.com\/[-\w\d]+\/[-\w\d]+\/assets\/\d+\/[\-0-9a-f]{32,512})\)/gm;
+    const REGEX_USER_CONTENT_IMAGE_LOOKUP = /\!\[([^\]]*)\]\((https:\/\/[-a-z0-9]+\.githubusercontent\.com\/\d+\/[-0-9a-f]{32,512}\.(jpg|gif|png))\)/gm;
+    const REGEX_ASSETS_IMAGE_LOOKUP = /\!\[([^\]]*)\]\((https:\/\/github\.com\/(?:user-attachments\/assets|[-\w\d]+\/[-\w\d]+\/assets\/\d+)\/[\-0-9a-f]{32,512})\)/gm;
 
     // Check if we found something
     let foundSimpleImages = REGEX_USER_CONTENT_IMAGE_LOOKUP.test(initialBody)
-        || REGEX_ASSETS_IMAGE_LOCKUP.test(initialBody);
+        || REGEX_ASSETS_IMAGE_LOOKUP.test(initialBody);
     if (!foundSimpleImages) {
         console.log('Found no simple images to process');
         return;
@@ -52,7 +52,7 @@ module.exports = async ({github, context}) => {
 
     // Try to find and replace the images with minimized ones
     let newBody = await replaceAsync(initialBody, REGEX_USER_CONTENT_IMAGE_LOOKUP, minimizeAsync);
-    newBody = await replaceAsync(newBody, REGEX_ASSETS_IMAGE_LOCKUP, minimizeAsync);
+    newBody = await replaceAsync(newBody, REGEX_ASSETS_IMAGE_LOOKUP, minimizeAsync);
     
     if (!wasMatchModified) {
         console.log('Nothing was modified. Skipping update');
@@ -86,7 +86,7 @@ module.exports = async ({github, context}) => {
         });
     }
 
-    // Asnyc replace function from https://stackoverflow.com/a/48032528
+    // Async replace function from https://stackoverflow.com/a/48032528
     async function replaceAsync(str, regex, asyncFn) {
         const promises = [];
         str.replace(regex, (match, ...args) => {
@@ -138,7 +138,7 @@ module.exports = async ({github, context}) => {
             if (shouldModify) {
                 wasMatchModified = true;
                 console.log(`Modifying match '${match}'`);
-                return `<img alt="${g1}" src="${g2}" width=${Math.min(600, (IMG_MAX_HEIGHT_PX * probeAspectRatio).toFixed(0))} />`;
+                return `<img alt="${g1}" src="${g2}" width=${Math.min(600, Math.floor(IMG_MAX_HEIGHT_PX * probeAspectRatio))} />`;
             }
 
             console.log(`Match '${match}' is ok/will not be modified`);

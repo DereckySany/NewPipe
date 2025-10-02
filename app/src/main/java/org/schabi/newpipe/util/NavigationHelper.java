@@ -1,5 +1,6 @@
 package org.schabi.newpipe.util;
 
+import static android.text.TextUtils.isEmpty;
 import static org.schabi.newpipe.util.ListHelper.getUrlAndNonTorrentStreams;
 
 import android.annotation.SuppressLint;
@@ -17,6 +18,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -29,8 +31,10 @@ import org.schabi.newpipe.RouterActivity;
 import org.schabi.newpipe.about.AboutActivity;
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity;
 import org.schabi.newpipe.download.DownloadActivity;
+import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.StreamingService;
+import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.DeliveryMethod;
@@ -41,6 +45,7 @@ import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.fragments.MainFragment;
 import org.schabi.newpipe.fragments.detail.VideoDetailFragment;
 import org.schabi.newpipe.fragments.list.channel.ChannelFragment;
+import org.schabi.newpipe.fragments.list.comments.CommentRepliesFragment;
 import org.schabi.newpipe.fragments.list.kiosk.KioskFragment;
 import org.schabi.newpipe.fragments.list.playlist.PlaylistFragment;
 import org.schabi.newpipe.fragments.list.search.SearchFragment;
@@ -52,8 +57,10 @@ import org.schabi.newpipe.local.subscription.SubscriptionFragment;
 import org.schabi.newpipe.local.subscription.SubscriptionsImportFragment;
 import org.schabi.newpipe.player.PlayQueueActivity;
 import org.schabi.newpipe.player.Player;
+import org.schabi.newpipe.player.PlayerIntentType;
 import org.schabi.newpipe.player.PlayerService;
 import org.schabi.newpipe.player.PlayerType;
+import org.schabi.newpipe.player.TimestampChangeData;
 import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.player.helper.PlayerHolder;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
@@ -62,6 +69,7 @@ import org.schabi.newpipe.settings.SettingsActivity;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 
 import java.util.List;
+import java.util.Optional;
 
 public final class NavigationHelper {
     public static final String MAIN_FRAGMENT_TAG = "main_fragment_tag";
@@ -80,53 +88,32 @@ public final class NavigationHelper {
     public static <T> Intent getPlayerIntent(@NonNull final Context context,
                                              @NonNull final Class<T> targetClazz,
                                              @Nullable final PlayQueue playQueue,
-                                             final boolean resumePlayback) {
-        final Intent intent = new Intent(context, targetClazz);
-
-        if (playQueue != null) {
-            final String cacheKey = SerializedCache.getInstance().put(playQueue, PlayQueue.class);
-            if (cacheKey != null) {
-                intent.putExtra(Player.PLAY_QUEUE_KEY, cacheKey);
-            }
-        }
-        intent.putExtra(Player.PLAYER_TYPE, PlayerType.MAIN.valueForIntent());
-        intent.putExtra(Player.RESUME_PLAYBACK, resumePlayback);
-
-        return intent;
+                                             @NonNull final PlayerIntentType playerIntentType) {
+        final String cacheKey = Optional.ofNullable(playQueue)
+                .map(queue -> SerializedCache.getInstance().put(queue, PlayQueue.class))
+                .orElse(null);
+        return new Intent(context, targetClazz)
+                .putExtra(Player.PLAY_QUEUE_KEY, cacheKey)
+                .putExtra(Player.PLAYER_TYPE, PlayerType.MAIN)
+                .putExtra(PlayerService.SHOULD_START_FOREGROUND_EXTRA, true)
+                .putExtra(Player.PLAYER_INTENT_TYPE, playerIntentType);
     }
 
     @NonNull
-    public static <T> Intent getPlayerIntent(@NonNull final Context context,
-                                             @NonNull final Class<T> targetClazz,
-                                             @Nullable final PlayQueue playQueue,
-                                             final boolean resumePlayback,
-                                             final boolean playWhenReady) {
-        return getPlayerIntent(context, targetClazz, playQueue, resumePlayback)
-                .putExtra(Player.PLAY_WHEN_READY, playWhenReady);
-    }
-
-    @NonNull
-    public static <T> Intent getPlayerEnqueueIntent(@NonNull final Context context,
-                                                    @NonNull final Class<T> targetClazz,
-                                                    @Nullable final PlayQueue playQueue) {
-        // when enqueueing `resumePlayback` is always `false` since:
-        // - if there is a video already playing, the value of `resumePlayback` just doesn't make
-        //   any difference.
-        // - if there is nothing already playing, it is useful for the enqueue action to have a
-        //   slightly different behaviour than the normal play action: the latter resumes playback,
-        //   the former doesn't. (note that enqueue can be triggered when nothing is playing only
-        //   by long pressing the video detail fragment, playlist or channel controls
-        return getPlayerIntent(context, targetClazz, playQueue, false)
-                .putExtra(Player.ENQUEUE, true);
+    public static Intent getPlayerTimestampIntent(@NonNull final Context context,
+                                                  @NonNull final TimestampChangeData data) {
+        return new Intent(context, PlayerService.class)
+                .putExtra(Player.PLAYER_INTENT_TYPE, PlayerIntentType.TimestampChange)
+                .putExtra(Player.PLAYER_INTENT_DATA, data);
     }
 
     @NonNull
     public static <T> Intent getPlayerEnqueueNextIntent(@NonNull final Context context,
                                                         @NonNull final Class<T> targetClazz,
                                                         @Nullable final PlayQueue playQueue) {
-        // see comment in `getPlayerEnqueueIntent` as to why `resumePlayback` is false
-        return getPlayerIntent(context, targetClazz, playQueue, false)
-                .putExtra(Player.ENQUEUE_NEXT, true);
+        return getPlayerIntent(context, targetClazz, playQueue, PlayerIntentType.EnqueueNext)
+                // see comment in `getPlayerEnqueueIntent` as to why `resumePlayback` is false
+                .putExtra(Player.RESUME_PLAYBACK, false);
     }
 
     /* PLAY */
@@ -160,8 +147,10 @@ public final class NavigationHelper {
 
         Toast.makeText(context, R.string.popup_playing_toast, Toast.LENGTH_SHORT).show();
 
-        final Intent intent = getPlayerIntent(context, PlayerService.class, queue, resumePlayback);
-        intent.putExtra(Player.PLAYER_TYPE, PlayerType.POPUP.valueForIntent());
+        final var intent = getPlayerIntent(context, PlayerService.class, queue,
+                PlayerIntentType.AllOthers)
+                .putExtra(Player.PLAYER_TYPE, PlayerType.POPUP)
+                .putExtra(Player.RESUME_PLAYBACK, resumePlayback);
         ContextCompat.startForegroundService(context, intent);
     }
 
@@ -171,8 +160,10 @@ public final class NavigationHelper {
         Toast.makeText(context, R.string.background_player_playing_toast, Toast.LENGTH_SHORT)
                 .show();
 
-        final Intent intent = getPlayerIntent(context, PlayerService.class, queue, resumePlayback);
-        intent.putExtra(Player.PLAYER_TYPE, PlayerType.AUDIO.valueForIntent());
+        final Intent intent = getPlayerIntent(context, PlayerService.class, queue,
+                PlayerIntentType.AllOthers)
+                .putExtra(Player.PLAYER_TYPE, PlayerType.AUDIO)
+                .putExtra(Player.RESUME_PLAYBACK, resumePlayback);
         ContextCompat.startForegroundService(context, intent);
     }
 
@@ -185,9 +176,18 @@ public final class NavigationHelper {
         }
 
         Toast.makeText(context, R.string.enqueued, Toast.LENGTH_SHORT).show();
-        final Intent intent = getPlayerEnqueueIntent(context, PlayerService.class, queue);
 
-        intent.putExtra(Player.PLAYER_TYPE, playerType.valueForIntent());
+        // when enqueueing `resumePlayback` is always `false` since:
+        // - if there is a video already playing, the value of `resumePlayback` just doesn't make
+        //   any difference.
+        // - if there is nothing already playing, it is useful for the enqueue action to have a
+        //   slightly different behaviour than the normal play action: the latter resumes playback,
+        //   the former doesn't. (note that enqueue can be triggered when nothing is playing only
+        //   by long pressing the video detail fragment, playlist or channel controls
+        final Intent intent = getPlayerIntent(context, PlayerService.class, queue,
+                PlayerIntentType.Enqueue)
+                .putExtra(Player.RESUME_PLAYBACK, false)
+                .putExtra(Player.PLAYER_TYPE, playerType);
         ContextCompat.startForegroundService(context, intent);
     }
 
@@ -209,9 +209,8 @@ public final class NavigationHelper {
             playerType = PlayerType.AUDIO;
         }
         Toast.makeText(context, R.string.enqueued_next, Toast.LENGTH_SHORT).show();
-        final Intent intent = getPlayerEnqueueNextIntent(context, PlayerService.class, queue);
-
-        intent.putExtra(Player.PLAYER_TYPE, playerType.valueForIntent());
+        final Intent intent = getPlayerEnqueueNextIntent(context, PlayerService.class, queue)
+                .putExtra(Player.PLAYER_TYPE, playerType);
         ContextCompat.startForegroundService(context, intent);
     }
 
@@ -447,8 +446,12 @@ public final class NavigationHelper {
         if (fragment instanceof VideoDetailFragment && fragment.isVisible()) {
             onVideoDetailFragmentReady.run((VideoDetailFragment) fragment);
         } else {
+            // Specify no url here, otherwise the VideoDetailFragment will start loading the
+            // stream automatically if it's the first time it is being opened, but then
+            // onVideoDetailFragmentReady will kick in and start another loading process.
+            // See VideoDetailFragment.wasCleared() and its usage in doInitialLoadLogic().
             final VideoDetailFragment instance = VideoDetailFragment
-                    .getInstance(serviceId, url, title, playQueue);
+                    .getInstance(serviceId, null, title, playQueue);
             instance.setAutoPlay(autoPlay);
 
             defaultTransaction(fragmentManager)
@@ -474,6 +477,35 @@ public final class NavigationHelper {
         openChannelFragment(
                 fragment.requireActivity().getSupportFragmentManager(),
                 item.getServiceId(), uploaderUrl, item.getUploaderName());
+    }
+
+    /**
+     * Opens the comment author channel fragment, if the {@link CommentsInfoItem#getUploaderUrl()}
+     * of {@code comment} is non-null. Shows a UI-error snackbar if something goes wrong.
+     *
+     * @param activity the activity with the fragment manager and in which to show the snackbar
+     * @param comment the comment whose uploader/author will be opened
+     */
+    public static void openCommentAuthorIfPresent(@NonNull final FragmentActivity activity,
+                                                  @NonNull final CommentsInfoItem comment) {
+        if (isEmpty(comment.getUploaderUrl())) {
+            return;
+        }
+        try {
+            openChannelFragment(activity.getSupportFragmentManager(), comment.getServiceId(),
+                    comment.getUploaderUrl(), comment.getUploaderName());
+        } catch (final Exception e) {
+            ErrorUtil.showUiErrorSnackbar(activity, "Opening channel fragment", e);
+        }
+    }
+
+    public static void openCommentRepliesFragment(@NonNull final FragmentActivity activity,
+                                                  @NonNull final CommentsInfoItem comment) {
+        defaultTransaction(activity.getSupportFragmentManager())
+                .replace(R.id.fragment_holder, new CommentRepliesFragment(comment),
+                        CommentRepliesFragment.TAG)
+                .addToBackStack(CommentRepliesFragment.TAG)
+                .commit();
     }
 
     public static void openPlaylistFragment(final FragmentManager fragmentManager,

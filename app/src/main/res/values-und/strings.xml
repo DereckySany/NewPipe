@@ -70,7 +70,6 @@
     <string name="video">ویڈیو</string>
     <string name="audio">آڈیو</string>
     <string name="retry">فیر کرو</string>
-    <string name="short_thousand">ہزار</string>
     <string name="create">بݨاؤ</string>
     <string name="tab_about">بارے</string>
     <string name="tab_licenses">لائیسنس</string>
@@ -118,7 +117,6 @@
     <string name="clear_queue_confirmation_title">کتار نوں خالی کرن توں پہلاں تصویر کرن لئی پچھو</string>
     <string name="clear_queue_confirmation_summary">پلیئر بدلݨ نال تہاڈی بدل سکدی اے</string>
     <string name="clear_queue_confirmation_description">سرگرم پکیئر کتار جاوےگا</string>
-    <string name="download_thumbnail_title">تھمنیل لوڈ کرو</string>
     <string name="show_description_title">وہروا دِکھاؤ</string>
     <string name="enable_search_history_title">کھوج دا اتیت</string>
     <string name="settings_category_clear_data_title">ڈیٹا پٹاؤ</string>

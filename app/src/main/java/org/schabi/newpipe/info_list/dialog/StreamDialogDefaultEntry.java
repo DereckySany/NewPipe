@@ -104,7 +104,7 @@ public enum StreamDialogDefaultEntry {
 
     SHARE(R.string.share, (fragment, item) ->
             ShareUtils.shareText(fragment.requireContext(), item.getName(), item.getUrl(),
-                    item.getThumbnailUrl())),
+                    item.getThumbnails())),
 
     /**
      * Opens a {@link DownloadDialog} after fetching some stream info.
@@ -113,7 +113,10 @@ public enum StreamDialogDefaultEntry {
     DOWNLOAD(R.string.download, (fragment, item) ->
             fetchStreamInfoAndSaveToDatabase(fragment.requireContext(), item.getServiceId(),
                     item.getUrl(), info -> {
-                        if (fragment.getContext() != null) {
+                        // Ensure the fragment is attached and its state hasn't been saved to avoid
+                        // showing dialog during lifecycle changes or when the activity is paused,
+                        // e.g. by selecting the download option and opening a different fragment.
+                        if (fragment.isAdded() && !fragment.isStateSaved()) {
                             final DownloadDialog downloadDialog =
                                     new DownloadDialog(fragment.requireContext(), info);
                             downloadDialog.show(fragment.getChildFragmentManager(),
